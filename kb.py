@@ -7,3 +7,11 @@ start_keyboard = InlineKeyboardMarkup(
     inline_keyboard=[[start_b1],
                      [start_b2]]
 )
+
+key_and_api_b1 = InlineKeyboardButton(text="Enter api", callback_data="api")
+key_and_api_b2 = InlineKeyboardButton(text="Enter secret key", callback_data="key")
+key_and_api_keyboard = InlineKeyboardMarkup(
+    inline_keyboard=[[key_and_api_b1],
+                     [key_and_api_b2]]
+)
+

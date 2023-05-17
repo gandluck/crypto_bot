@@ -1,0 +1,1 @@
+start_msg = "Hello!\nSo,to get access to the functionality of the service, you need to enter the Binance API and secret key\n\nDon't worry, repos won't get access to your wallet. Only copying traders' orders to your future account.\n\nHere are the IP address allocated for you. Spectify them when creating keys"

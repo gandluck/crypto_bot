@@ -1,16 +1,18 @@
-from aiogram import types, F, Router
+from aiogram import types, F, Router, Dispatcher
 from aiogram.types import Message
 from aiogram.filters import Command
+from aiogram import F
+import text
+import kb
 
-
+dp = Dispatcher()
 router = Router()
 
 
 @router.message(Command("start"))
 async def start_handler(msg: Message):
-    await msg.answer("Привет! Я помогу тебе узнать твой ID, просто отправь мне любое сообщение")
+    await msg.answer(text=text.start_msg, reply_markup=kb.start_keyboard)
 
-
-@router.message()
-async def message_handler(msg: Message):
-    await msg.answer(f"Твой ID: {msg.from_user.id}")
+@router.callback_query(F.data == "key_and_api")
+async def callback_query_handler(callback_query: types.CallbackQuery):
+    await callback_query.message.answer(text='тут должна быть регистрация')

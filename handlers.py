@@ -56,14 +56,19 @@ async def get_secret_key(msg: Message, state: FSMContext):
 # Хендлер для списка трейдеров
 @router.callback_query(F.data == "list_of_traders")
 async def list_of_traders(callback_query: types.CallbackQuery):
-    await callback_query.message.answer(text='Здесь будет список трейдеров')
+    await callback_query.message.answer(text='Здесь будет список трейдеров', reply_markup=kb.back_to_menu_keyboard)
 #Хендлер для пополнения баланса
 @router.callback_query(F.data == "top_up")
 async def top_up_balance(callback_query: types.CallbackQuery):
-    await callback_query.message.answer(text='Здесь будет пополнение аккаунта')
+    await callback_query.message.answer(text='Здесь будет пополнение аккаунта', reply_markup=kb.back_to_menu_keyboard)
 #Хендлер для инструкций
 @router.callback_query(F.data == "instructions")
 async def instructions(callback_query: types.CallbackQuery):
-    await callback_query.message.answer(text='Здесь будут инструкции')
+    await callback_query.message.answer(text='Здесь будут инструкции', reply_markup=kb.back_to_menu_keyboard)
+
+#Хендлер для кнопки "Back to menu"
+@router.callback_query(F.data == "back_to_menu")
+async def menu(callback_query: types.CallbackQuery):
+    await callback_query.message.answer(text='Here is the menu', reply_markup=kb.menu_keyboard)
 
 

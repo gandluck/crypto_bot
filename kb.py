@@ -31,5 +31,6 @@ menu_keyboard = InlineKeyboardMarkup(
                      [top_up_b2],
                      [instructions_b3]]
 )
-
-
+back_to_menu_b1 = InlineKeyboardButton(text="Back to menu", callback_data="back_to_menu")
+back_to_menu_keyboard = InlineKeyboardMarkup(
+    inline_keyboard=[[back_to_menu_b1]])

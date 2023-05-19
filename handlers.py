@@ -7,10 +7,12 @@ from aiogram.types import FSInputFile
 import text
 import kb
 import states
+import db
 
 user = states.User()
 router = Router()
 agreement = FSInputFile("agreement.docx")
+
 
 # Хендлер для начальной команды /start
 @router.message(Command("start"))
@@ -19,32 +21,42 @@ async def start_handler(msg: Message, state: FSMContext):
     await msg.answer(text=text.start_text,
                      reply_markup=kb.start_keyboard)
 
+
 # Хендлер для начала регистрации
 @router.callback_query(F.data == "key_and_api")
 async def agreement(callback_query: types.CallbackQuery):
-    await callback_query.message.answer(text='Please read our user agreement and accept it\nЗдесь будет прикреплен документ',
-                                        reply_markup=kb.agreement_keyboard)
+    await callback_query.message.answer(
+        text='Please read our user agreement and accept it\nЗдесь будет прикреплен документ',
+        reply_markup=kb.agreement_keyboard)
+    await callback_query.answer()
+    # await callback_query.message.answer_document()
 
-#Хендлер для согласия с пользовательским соглашением
+
+# Хендлер для согласия с пользовательским соглашением
 @router.callback_query(F.data == "agreement")
 async def agreed(callback_query: types.CallbackQuery, state: FSMContext):
     await state.set_state(states.UserStates.unregistered)
     await callback_query.message.answer(text='You have successfully accepted the agreement!',
                                         reply_markup=kb.agreed_keyboard)
+    await callback_query.answer()
 
-#Хендлер для начала ввода API
+
+# Хендлер для начала ввода API
 @router.callback_query(F.data == "api")
 async def callback_query_handler(callback_query: types.CallbackQuery):
     await callback_query.message.answer(text='Please, send your Binance API', reply_markup=kb.manual_keyboard)
+    await callback_query.answer()
 
-#Хендлер для присланного API
+
+# Хендлер для присланного API
 @router.message(states.UserStates.unregistered)
 async def get_api(msg: Message, state: FSMContext):
     user.api = msg.text
     await msg.answer(text='Please, send your secret key')
     await state.set_state(states.UserStates.unregistered_with_api)
 
-#Хендлер для присланного secret key
+
+# Хендлер для присланного secret key
 @router.message(states.UserStates.unregistered_with_api)
 async def get_secret_key(msg: Message, state: FSMContext):
     user.secret_key = msg.text
@@ -53,22 +65,37 @@ async def get_secret_key(msg: Message, state: FSMContext):
     await state.set_state(states.UserStates.registered)
     await msg.answer(text=text.registration_text, reply_markup=kb.menu_keyboard)
 
+
 # Хендлер для списка трейдеров
 @router.callback_query(F.data == "list_of_traders")
 async def list_of_traders(callback_query: types.CallbackQuery):
-    await callback_query.message.answer(text='Здесь будет список трейдеров', reply_markup=kb.back_to_menu_keyboard)
-#Хендлер для пополнения баланса
+    traders = db.Data.get_traiders()
+    result_text = []
+    for i in range(len(traders)):
+        x = f'{i + 1}) {traders[i]}\n'
+        result_text.append(x)
+
+    await callback_query.message.answer(text=f'Here i the list of traders:\n{"".join(result_text)}',
+                                        reply_markup=kb.back_to_menu_keyboard)
+    await callback_query.answer()
+
+
+# Хендлер для пополнения баланса
 @router.callback_query(F.data == "top_up")
 async def top_up_balance(callback_query: types.CallbackQuery):
     await callback_query.message.answer(text='Здесь будет пополнение аккаунта', reply_markup=kb.back_to_menu_keyboard)
-#Хендлер для инструкций
+    await callback_query.answer()
+
+
+# Хендлер для инструкций
 @router.callback_query(F.data == "instructions")
 async def instructions(callback_query: types.CallbackQuery):
     await callback_query.message.answer(text='Здесь будут инструкции', reply_markup=kb.back_to_menu_keyboard)
+    await callback_query.answer()
 
-#Хендлер для кнопки "Back to menu"
+
+# Хендлер для кнопки "Back to menu"
 @router.callback_query(F.data == "back_to_menu")
 async def menu(callback_query: types.CallbackQuery):
     await callback_query.message.answer(text='Here is the menu', reply_markup=kb.menu_keyboard)
-
-
+    await callback_query.answer()
